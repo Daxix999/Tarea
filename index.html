@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clínica Salud Total - Sistema de Citas</title>
+    <title>Clínica Salud Total - Prototipo de Citas Médicas</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAPFBMVEUAAAD///8AAAD/AAAA/wAA/wD/AP8A//8A/wD//wD/AP//AP8A//8A/wAAAP8A//8A/wD/AP8A//8A/wD///9d2rKkAAAAE3RSTlMAAQIDBAUGBwgJCgsMDQ4PEBESExT1BAAAALVJREFUOI2dkksOgzAMRFUqKoqIiuL+/6+7tN1tJ7vZ3eQ85+HJkF2MAiMEOIyxB2CchUjG5cAIIY4Y/4yQDIkRwgghjhh/jJAMiRFCCCGOGP+MEAyJEUIIIY4Y/4yQDIkRQgghhhj/jJAMiRFCCCGOGP+MEAyJEUIIIY4Y/4yQDIkRQgghhhj/jJAMiRFCCCGOGP+MEAyJEUIIIY4Y/4yQDIkRQgghhhj/jJAMiRFCCCGOGP+MEAyJEcL/AyV1M4c4u9wAAAAASUVORK5CYII=">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -19,7 +19,6 @@
             justify-content: center;
             align-items: center;
         }
-
         .container {
             background: white;
             border-radius: 20px;
@@ -28,44 +27,36 @@
             min-height: 600px;
             overflow: hidden;
         }
-
         .header {
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             color: white;
             padding: 20px;
             text-align: center;
         }
-
         .header h1 {
             font-size: 2em;
             margin-bottom: 5px;
         }
-
         .header p {
             opacity: 0.9;
         }
-
         .screen {
             display: none;
             padding: 40px;
             min-height: 500px;
         }
-
         .screen.active {
             display: block;
         }
-
         .form-group {
             margin-bottom: 20px;
         }
-
         .form-group label {
             display: block;
             margin-bottom: 5px;
             font-weight: 600;
             color: #333;
         }
-
         .form-group input, .form-group select, .form-group textarea {
             width: 100%;
             padding: 12px;
@@ -74,12 +65,10 @@
             font-size: 16px;
             transition: border-color 0.3s;
         }
-
         .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
             outline: none;
             border-color: #4facfe;
         }
-
         .btn {
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             color: white;
@@ -92,23 +81,19 @@
             transition: all 0.3s;
             margin: 10px 5px;
         }
-
         .btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3);
         }
-
         .btn-secondary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
-
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
             gap: 10px;
             margin: 20px 0;
         }
-
         .calendar-day {
             padding: 15px;
             text-align: center;
@@ -117,25 +102,21 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-
         .calendar-day:hover {
             border-color: #4facfe;
             background: #f8fafc;
         }
-
         .calendar-day.selected {
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             color: white;
             border-color: #4facfe;
         }
-
         .time-slots {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 10px;
             margin: 20px 0;
         }
-
         .time-slot {
             padding: 10px;
             text-align: center;
@@ -144,18 +125,15 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-
         .time-slot:hover {
             border-color: #4facfe;
             background: #f8fafc;
         }
-
         .time-slot.selected {
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             color: white;
             border-color: #4facfe;
         }
-
         .doctor-card {
             border: 2px solid #e1e8ed;
             border-radius: 15px;
@@ -164,33 +142,27 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-
         .doctor-card:hover {
             border-color: #4facfe;
             background: #f8fafc;
         }
-
         .doctor-card.selected {
             border-color: #4facfe;
             background: linear-gradient(135deg, rgba(79, 172, 254, 0.1) 0%, rgba(0, 242, 254, 0.1) 100%);
         }
-
         .doctor-name {
             font-size: 18px;
             font-weight: 600;
             color: #333;
             margin-bottom: 5px;
         }
-
         .doctor-specialty {
             color: #666;
             margin-bottom: 10px;
         }
-
         .doctor-rating {
             color: #ffc107;
         }
-
         .appointment-card {
             background: linear-gradient(135deg, rgba(79, 172, 254, 0.1) 0%, rgba(0, 242, 254, 0.1) 100%);
             border-radius: 15px;
@@ -198,7 +170,6 @@
             margin: 15px 0;
             border-left: 5px solid #4facfe;
         }
-
         .chat-container {
             border: 2px solid #e1e8ed;
             border-radius: 15px;
@@ -206,37 +177,31 @@
             display: flex;
             flex-direction: column;
         }
-
         .chat-messages {
             flex: 1;
             padding: 20px;
             overflow-y: auto;
         }
-
         .message {
             margin: 10px 0;
             padding: 10px 15px;
             border-radius: 20px;
             max-width: 70%;
         }
-
         .message.user {
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             color: white;
             margin-left: auto;
         }
-
         .message.bot {
             background: #f1f3f4;
             color: #333;
         }
-
         .chat-input {
             display: flex;
             padding: 20px;
             border-top: 1px solid #e1e8ed;
         }
-
         .chat-input input {
             flex: 1;
             padding: 10px;
@@ -244,14 +209,12 @@
             border-radius: 20px;
             margin-right: 10px;
         }
-
         .success-icon {
             font-size: 60px;
             color: #28a745;
             text-align: center;
             margin: 20px 0;
         }
-
         .navigation {
             display: flex;
             justify-content: space-between;
@@ -260,10 +223,12 @@
     </style>
 </head>
 <body>
+    <!-- Contenedor principal -->
     <div class="container">
+        <!-- Encabezado -->
         <div class="header">
             <h1>🏥 Clínica Salud Total</h1>
-            <p>Sistema de Citas Médicas en Línea</p>
+            <p>Prototipo de Sistema de Citas Médicas en Línea</p>
         </div>
 
         <!-- Pantalla de Login/Registro -->
@@ -274,11 +239,11 @@
                     <h3>Iniciar Sesión</h3>
                     <div class="form-group">
                         <label>Email:</label>
-                        <input type="email" id="login-email" placeholder="su.email@ejemplo.com">
+                        <input type="email" id="login-email" placeholder="su.email@ejemplo.com" required>
                     </div>
                     <div class="form-group">
                         <label>Contraseña:</label>
-                        <input type="password" id="login-password" placeholder="••••••••">
+                        <input type="password" id="login-password" placeholder="••••••••" required>
                     </div>
                     <button class="btn" onclick="login()">Iniciar Sesión</button>
                 </div>
@@ -286,15 +251,15 @@
                     <h3>Registrarse</h3>
                     <div class="form-group">
                         <label>Nombre Completo:</label>
-                        <input type="text" id="register-name" placeholder="Juan Pérez">
+                        <input type="text" id="register-name" placeholder="Juan Pérez" required>
                     </div>
                     <div class="form-group">
                         <label>Email:</label>
-                        <input type="email" id="register-email" placeholder="juan@ejemplo.com">
+                        <input type="email" id="register-email" placeholder="juan@ejemplo.com" required>
                     </div>
                     <div class="form-group">
                         <label>Teléfono:</label>
-                        <input type="tel" id="register-phone" placeholder="0999123456">
+                        <input type="tel" id="register-phone" placeholder="0999123456" required>
                     </div>
                     <button class="btn btn-secondary" onclick="register()">Registrarse</button>
                 </div>
@@ -363,7 +328,7 @@
             </div>
             <div class="form-group">
                 <label>Motivo de la consulta:</label>
-                <textarea id="consultation-reason" rows="3" placeholder="Describe brevemente el motivo de tu consulta..."></textarea>
+                <textarea id="consultation-reason" rows="3" placeholder="Describe brevemente el motivo de tu consulta..." required></textarea>
             </div>
             <div class="navigation">
                 <button class="btn btn-secondary" onclick="showScreen('calendar-screen')">Volver</button>
@@ -377,8 +342,7 @@
                 <div class="success-icon">✅</div>
                 <h2>¡Cita Agendada Exitosamente!</h2>
                 <p>Tu cita ha sido confirmada. Te hemos enviado un correo de confirmación.</p>
-                <div class="appointment-card" id="confirmed-appointment">
-                </div>
+                <div class="appointment-card" id="confirmed-appointment"></div>
                 <p><strong>📧 Confirmación enviada por email</strong></p>
                 <p><strong>📱 Recordatorio SMS enviado</strong></p>
                 <div style="margin-top: 30px;">
@@ -427,7 +391,7 @@
                     </div>
                 </div>
                 <div class="chat-input">
-                    <input type="text" id="chat-input" placeholder="Escribe tu pregunta aquí..." onkeypress="if(event.key==='Enter') sendMessage()">
+                    <input type="text" id="chat-input" placeholder="Escribe tu pregunta aquí..." onkeypress="if(event.key === 'Enter') sendMessage()">
                     <button class="btn" onclick="sendMessage()">Enviar</button>
                 </div>
             </div>
@@ -436,6 +400,7 @@
                 <button class="btn btn-secondary" onclick="askPredefined('¿Cuáles son los síntomas de la gripe?')">Síntomas de gripe</button>
                 <button class="btn btn-secondary" onclick="askPredefined('¿Cómo puedo agendar una cita?')">Agendar cita</button>
                 <button class="btn btn-secondary" onclick="askPredefined('¿Qué especialidades tienen disponibles?')">Especialidades</button>
+                <button class="btn btn-secondary" onclick="askPredefined('¿Qué debo hacer si tengo fiebre?')">Fiebre</button>
             </div>
             <div class="navigation">
                 <button class="btn btn-secondary" onclick="showScreen('dashboard-screen')">Volver</button>
@@ -476,7 +441,6 @@
         function showScreen(screenId) {
             document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
-            
             if (screenId === 'booking-screen') {
                 generateCalendar();
             }
@@ -485,7 +449,6 @@
         function login() {
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
-            
             if (email && password) {
                 currentUser = email.split('@')[0];
                 document.getElementById('user-name').textContent = currentUser.charAt(0).toUpperCase() + currentUser.slice(1);
@@ -499,7 +462,6 @@
             const name = document.getElementById('register-name').value;
             const email = document.getElementById('register-email').value;
             const phone = document.getElementById('register-phone').value;
-            
             if (name && email && phone) {
                 currentUser = name;
                 document.getElementById('user-name').textContent = name;
@@ -520,16 +482,13 @@
         function loadDoctors() {
             const specialty = document.getElementById('specialty-select').value;
             const container = document.getElementById('doctors-container');
-            
             if (!specialty) {
                 container.innerHTML = '';
                 document.getElementById('next-to-booking').style.display = 'none';
                 return;
             }
-            
             const doctorsList = doctors[specialty] || [];
             container.innerHTML = '<h3>Médicos Disponibles:</h3>';
-            
             doctorsList.forEach((doctor, index) => {
                 container.innerHTML += `
                     <div class="doctor-card" onclick="selectDoctor('${doctor.name}', '${doctor.specialty}')">
@@ -552,19 +511,15 @@
 
         function generateCalendar() {
             if (!selectedDoctor) return;
-            
             document.getElementById('selected-doctor').value = selectedDoctor.name + ' - ' + selectedDoctor.specialty;
-            
             const grid = document.getElementById('calendar-grid');
             const today = new Date();
             const startDate = new Date(today);
             startDate.setDate(startDate.getDate() + 1);
-            
             grid.innerHTML = '';
             for (let i = 0; i < 14; i++) {
                 const date = new Date(startDate);
                 date.setDate(date.getDate() + i);
-                
                 const dayDiv = document.createElement('div');
                 dayDiv.className = 'calendar-day';
                 dayDiv.innerHTML = `
@@ -575,7 +530,6 @@
                 dayDiv.onclick = () => selectDate(date, dayDiv);
                 grid.appendChild(dayDiv);
             }
-            
             generateTimeSlots();
         }
 
@@ -589,7 +543,6 @@
         function generateTimeSlots() {
             const slots = document.getElementById('time-slots');
             const times = ['9:00 AM', '10:00 AM', '11:00 AM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM', '6:00 PM'];
-            
             slots.innerHTML = '';
             times.forEach(time => {
                 const slotDiv = document.createElement('div');
@@ -616,12 +569,10 @@
 
         function confirmAppointment() {
             const reason = document.getElementById('consultation-reason').value;
-            
             if (!reason.trim()) {
                 alert('Por favor ingresa el motivo de la consulta');
                 return;
             }
-            
             const appointment = {
                 doctor: selectedDoctor,
                 date: selectedDate,
@@ -629,9 +580,7 @@
                 reason: reason,
                 id: Date.now()
             };
-            
             appointments.push(appointment);
-            
             document.getElementById('confirmed-appointment').innerHTML = `
                 <div class="doctor-name">${selectedDoctor.name} - ${selectedDoctor.specialty}</div>
                 <div class="doctor-specialty">📅 ${selectedDate.toLocaleDateString('es-ES', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'})} - ${selectedTime}</div>
@@ -640,7 +589,6 @@
                     <strong>Estado:</strong> <span style="color: #28a745;">Confirmada</span>
                 </div>
             `;
-            
             showScreen('confirmation-screen');
             updateHistoryScreen();
         }
@@ -648,7 +596,6 @@
         function updateHistoryScreen() {
             const upcomingContainer = document.getElementById('upcoming-appointments');
             upcomingContainer.innerHTML = '';
-            
             appointments.forEach(appointment => {
                 upcomingContainer.innerHTML += `
                     <div class="appointment-card">
@@ -666,20 +613,15 @@
         function sendMessage() {
             const input = document.getElementById('chat-input');
             const message = input.value.trim();
-            
             if (!message) return;
-            
             const messagesContainer = document.getElementById('chat-messages');
             messagesContainer.innerHTML += `<div class="message user">${message}</div>`;
-            
             input.value = '';
-            
             setTimeout(() => {
                 const response = generateChatResponse(message);
                 messagesContainer.innerHTML += `<div class="message bot">${response}</div>`;
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
             }, 1000);
-            
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
@@ -690,13 +632,14 @@
 
         function generateChatResponse(message) {
             const lowerMessage = message.toLowerCase();
-            
             if (lowerMessage.includes('gripe') || lowerMessage.includes('síntoma')) {
                 return "Los síntomas comunes de la gripe incluyen: fiebre, dolores musculares, fatiga, tos seca, dolor de garganta y congestión nasal. Si los síntomas persisten más de 3 días, te recomiendo agendar una cita médica. 🤒";
             } else if (lowerMessage.includes('cita') || lowerMessage.includes('agendar')) {
                 return "Para agendar una cita puedes: 1) Ir a 'Agendar Nueva Cita' desde el menú principal, 2) Seleccionar la especialidad médica, 3) Elegir tu médico preferido, 4) Seleccionar fecha y hora disponible. ¡Es muy fácil! 📅";
             } else if (lowerMessage.includes('especialidad')) {
                 return "Tenemos las siguientes especialidades disponibles: Cardiología, Dermatología, Pediatría, Ginecología y Medicina General. Cada especialidad cuenta con médicos altamente calificados. 👩‍⚕️👨‍⚕️";
+            } else if (lowerMessage.includes('fiebre')) {
+                return "Si tienes fiebre, mantente hidratado y descansa. Puedes tomar un antipirético como paracetamol, pero si la fiebre persiste más de 48 horas o es muy alta, te recomiendo agendar una cita con un médico. 🌡️";
             } else if (lowerMessage.includes('dolor') || lowerMessage.includes('duele')) {
                 return "Si tienes dolor persistente, es importante que consultes con un médico. Mientras tanto, puedes aplicar compresas frías/calientes según el tipo de dolor. Te sugiero agendar una cita para evaluación médica. 💊";
             } else {
@@ -704,7 +647,6 @@
             }
         }
 
-        // Inicializar la aplicación
         document.addEventListener('DOMContentLoaded', function() {
             showScreen('login-screen');
         });
