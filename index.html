@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clínica Salud Total - Sistema de Citas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            width: 900px;
+            min-height: 600px;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            opacity: 0.9;
+        }
+
+        .screen {
+            display: none;
+            padding: 40px;
+            min-height: 500px;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #4facfe;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 10px 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .calendar-day {
+            padding: 15px;
+            text-align: center;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .calendar-day:hover {
+            border-color: #4facfe;
+            background: #f8fafc;
+        }
+
+        .calendar-day.selected {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border-color: #4facfe;
+        }
+
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .time-slot {
+            padding: 10px;
+            text-align: center;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .time-slot:hover {
+            border-color: #4facfe;
+            background: #f8fafc;
+        }
+
+        .time-slot.selected {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border-color: #4facfe;
+        }
+
+        .doctor-card {
+            border: 2px solid #e1e8ed;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .doctor-card:hover {
+            border-color: #4facfe;
+            background: #f8fafc;
+        }
+
+        .doctor-card.selected {
+            border-color: #4facfe;
+            background: linear-gradient(135deg, rgba(79, 172, 254, 0.1) 0%, rgba(0, 242, 254, 0.1) 100%);
+        }
+
+        .doctor-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .doctor-specialty {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .doctor-rating {
+            color: #ffc107;
+        }
+
+        .appointment-card {
+            background: linear-gradient(135deg, rgba(79, 172, 254, 0.1) 0%, rgba(0, 242, 254, 0.1) 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 5px solid #4facfe;
+        }
+
+        .chat-container {
+            border: 2px solid #e1e8ed;
+            border-radius: 15px;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .message {
+            margin: 10px 0;
+            padding: 10px 15px;
+            border-radius: 20px;
+            max-width: 70%;
+        }
+
+        .message.user {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            margin-left: auto;
+        }
+
+        .message.bot {
+            background: #f1f3f4;
+            color: #333;
+        }
+
+        .chat-input {
+            display: flex;
+            padding: 20px;
+            border-top: 1px solid #e1e8ed;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #e1e8ed;
+            border-radius: 20px;
+            margin-right: 10px;
+        }
+
+        .success-icon {
+            font-size: 60px;
+            color: #28a745;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏥 Clínica Salud Total</h1>
+            <p>Sistema de Citas Médicas en Línea</p>
+        </div>
+
+        <!-- Pantalla de Login/Registro -->
+        <div class="screen active" id="login-screen">
+            <h2>Acceso al Sistema</h2>
+            <div style="display: flex; gap: 40px; justify-content: center; margin-top: 40px;">
+                <div style="flex: 1;">
+                    <h3>Iniciar Sesión</h3>
+                    <div class="form-group">
+                        <label>Email:</label>
+                        <input type="email" id="login-email" placeholder="su.email@ejemplo.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Contraseña:</label>
+                        <input type="password" id="login-password" placeholder="••••••••">
+                    </div>
+                    <button class="btn" onclick="login()">Iniciar Sesión</button>
+                </div>
+                <div style="flex: 1;">
+                    <h3>Registrarse</h3>
+                    <div class="form-group">
+                        <label>Nombre Completo:</label>
+                        <input type="text" id="register-name" placeholder="Juan Pérez">
+                    </div>
+                    <div class="form-group">
+                        <label>Email:</label>
+                        <input type="email" id="register-email" placeholder="juan@ejemplo.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Teléfono:</label>
+                        <input type="tel" id="register-phone" placeholder="0999123456">
+                    </div>
+                    <button class="btn btn-secondary" onclick="register()">Registrarse</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pantalla Principal (Dashboard) -->
+        <div class="screen" id="dashboard-screen">
+            <h2>Bienvenido, <span id="user-name">Usuario</span> 👋</h2>
+            <p>¿Qué deseas hacer hoy?</p>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 30px;">
+                <div class="doctor-card" onclick="showScreen('calendar-screen')">
+                    <div class="doctor-name">📅 Agendar Nueva Cita</div>
+                    <div class="doctor-specialty">Programa tu próxima consulta médica</div>
+                </div>
+                <div class="doctor-card" onclick="showScreen('history-screen')">
+                    <div class="doctor-name">📋 Historial de Citas</div>
+                    <div class="doctor-specialty">Revisa tus citas anteriores y próximas</div>
+                </div>
+                <div class="doctor-card" onclick="showScreen('chat-screen')">
+                    <div class="doctor-name">💬 Consulta Rápida</div>
+                    <div class="doctor-specialty">Chat con asistente médico virtual</div>
+                </div>
+                <div class="doctor-card" onclick="logout()">
+                    <div class="doctor-name">🚪 Cerrar Sesión</div>
+                    <div class="doctor-specialty">Salir del sistema</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pantalla de Calendario y Especialidades -->
+        <div class="screen" id="calendar-screen">
+            <h2>Seleccionar Especialidad y Médico</h2>
+            <div class="form-group">
+                <label>Especialidad Médica:</label>
+                <select id="specialty-select" onchange="loadDoctors()">
+                    <option value="">Selecciona una especialidad...</option>
+                    <option value="cardiologia">Cardiología</option>
+                    <option value="dermatologia">Dermatología</option>
+                    <option value="pediatria">Pediatría</option>
+                    <option value="ginecologia">Ginecología</option>
+                    <option value="medicina-general">Medicina General</option>
+                </select>
+            </div>
+            <div id="doctors-container"></div>
+            <div class="navigation">
+                <button class="btn btn-secondary" onclick="showScreen('dashboard-screen')">Volver</button>
+                <button class="btn" onclick="showScreen('booking-screen')" id="next-to-booking" style="display: none;">Siguiente</button>
+            </div>
+        </div>
+
+        <!-- Pantalla de Reserva -->
+        <div class="screen" id="booking-screen">
+            <h2>Agendar Cita Médica</h2>
+            <div class="form-group">
+                <label>Médico Seleccionado:</label>
+                <input type="text" id="selected-doctor" readonly>
+            </div>
+            <div class="form-group">
+                <label>Selecciona una fecha:</label>
+                <div class="calendar-grid" id="calendar-grid"></div>
+            </div>
+            <div class="form-group">
+                <label>Horarios disponibles:</label>
+                <div class="time-slots" id="time-slots"></div>
+            </div>
+            <div class="form-group">
+                <label>Motivo de la consulta:</label>
+                <textarea id="consultation-reason" rows="3" placeholder="Describe brevemente el motivo de tu consulta..."></textarea>
+            </div>
+            <div class="navigation">
+                <button class="btn btn-secondary" onclick="showScreen('calendar-screen')">Volver</button>
+                <button class="btn" onclick="confirmAppointment()" id="confirm-btn" style="display: none;">Confirmar Cita</button>
+            </div>
+        </div>
+
+        <!-- Pantalla de Confirmación -->
+        <div class="screen" id="confirmation-screen">
+            <div style="text-align: center;">
+                <div class="success-icon">✅</div>
+                <h2>¡Cita Agendada Exitosamente!</h2>
+                <p>Tu cita ha sido confirmada. Te hemos enviado un correo de confirmación.</p>
+                <div class="appointment-card" id="confirmed-appointment">
+                </div>
+                <p><strong>📧 Confirmación enviada por email</strong></p>
+                <p><strong>📱 Recordatorio SMS enviado</strong></p>
+                <div style="margin-top: 30px;">
+                    <button class="btn" onclick="showScreen('dashboard-screen')">Volver al Inicio</button>
+                    <button class="btn btn-secondary" onclick="showScreen('history-screen')">Ver Historial</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pantalla de Historial -->
+        <div class="screen" id="history-screen">
+            <h2>Historial de Citas Médicas</h2>
+            <h3>Próximas Citas</h3>
+            <div id="upcoming-appointments"></div>
+            <h3 style="margin-top: 30px;">Citas Anteriores</h3>
+            <div id="past-appointments">
+                <div class="appointment-card">
+                    <div class="doctor-name">Dr. María González - Cardiología</div>
+                    <div class="doctor-specialty">📅 15 de Diciembre, 2024 - 10:00 AM</div>
+                    <div style="margin-top: 10px;">
+                        <strong>Motivo:</strong> Control de presión arterial<br>
+                        <strong>Estado:</strong> <span style="color: #28a745;">Completada</span>
+                    </div>
+                </div>
+                <div class="appointment-card">
+                    <div class="doctor-name">Dr. Carlos Ruiz - Medicina General</div>
+                    <div class="doctor-specialty">📅 5 de Noviembre, 2024 - 3:00 PM</div>
+                    <div style="margin-top: 10px;">
+                        <strong>Motivo:</strong> Chequeo médico general<br>
+                        <strong>Estado:</strong> <span style="color: #28a745;">Completada</span>
+                    </div>
+                </div>
+            </div>
+            <div class="navigation">
+                <button class="btn btn-secondary" onclick="showScreen('dashboard-screen')">Volver</button>
+            </div>
+        </div>
+
+        <!-- Pantalla de Chat -->
+        <div class="screen" id="chat-screen">
+            <h2>Consulta Rápida - Asistente Virtual</h2>
+            <div class="chat-container">
+                <div class="chat-messages" id="chat-messages">
+                    <div class="message bot">
+                        ¡Hola! Soy tu asistente médico virtual 🤖. Puedo ayudarte con consultas básicas sobre síntomas o información general de salud. ¿En qué puedo ayudarte hoy?
+                    </div>
+                </div>
+                <div class="chat-input">
+                    <input type="text" id="chat-input" placeholder="Escribe tu pregunta aquí..." onkeypress="if(event.key==='Enter') sendMessage()">
+                    <button class="btn" onclick="sendMessage()">Enviar</button>
+                </div>
+            </div>
+            <div style="margin-top: 20px;">
+                <h4>Preguntas frecuentes:</h4>
+                <button class="btn btn-secondary" onclick="askPredefined('¿Cuáles son los síntomas de la gripe?')">Síntomas de gripe</button>
+                <button class="btn btn-secondary" onclick="askPredefined('¿Cómo puedo agendar una cita?')">Agendar cita</button>
+                <button class="btn btn-secondary" onclick="askPredefined('¿Qué especialidades tienen disponibles?')">Especialidades</button>
+            </div>
+            <div class="navigation">
+                <button class="btn btn-secondary" onclick="showScreen('dashboard-screen')">Volver</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedDoctor = null;
+        let selectedDate = null;
+        let selectedTime = null;
+        let currentUser = null;
+        let appointments = [];
+
+        const doctors = {
+            cardiologia: [
+                {name: "Dr. María González", specialty: "Cardiología", rating: "⭐⭐⭐⭐⭐", experience: "15 años"},
+                {name: "Dr. Roberto Silva", specialty: "Cardiología", rating: "⭐⭐⭐⭐⭐", experience: "12 años"}
+            ],
+            dermatologia: [
+                {name: "Dra. Ana Martínez", specialty: "Dermatología", rating: "⭐⭐⭐⭐⭐", experience: "10 años"},
+                {name: "Dr. Luis Herrera", specialty: "Dermatología", rating: "⭐⭐⭐⭐", experience: "8 años"}
+            ],
+            pediatria: [
+                {name: "Dra. Carmen López", specialty: "Pediatría", rating: "⭐⭐⭐⭐⭐", experience: "18 años"},
+                {name: "Dr. Miguel Torres", specialty: "Pediatría", rating: "⭐⭐⭐⭐⭐", experience: "14 años"}
+            ],
+            ginecologia: [
+                {name: "Dra. Isabel Ramírez", specialty: "Ginecología", rating: "⭐⭐⭐⭐⭐", experience: "16 años"},
+                {name: "Dra. Patricia Vega", specialty: "Ginecología", rating: "⭐⭐⭐⭐", experience: "11 años"}
+            ],
+            "medicina-general": [
+                {name: "Dr. Carlos Ruiz", specialty: "Medicina General", rating: "⭐⭐⭐⭐⭐", experience: "20 años"},
+                {name: "Dra. Elena Morales", specialty: "Medicina General", rating: "⭐⭐⭐⭐", experience: "9 años"}
+            ]
+        };
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            
+            if (screenId === 'booking-screen') {
+                generateCalendar();
+            }
+        }
+
+        function login() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            if (email && password) {
+                currentUser = email.split('@')[0];
+                document.getElementById('user-name').textContent = currentUser.charAt(0).toUpperCase() + currentUser.slice(1);
+                showScreen('dashboard-screen');
+            } else {
+                alert('Por favor ingresa tu email y contraseña');
+            }
+        }
+
+        function register() {
+            const name = document.getElementById('register-name').value;
+            const email = document.getElementById('register-email').value;
+            const phone = document.getElementById('register-phone').value;
+            
+            if (name && email && phone) {
+                currentUser = name;
+                document.getElementById('user-name').textContent = name;
+                showScreen('dashboard-screen');
+                alert('¡Registro exitoso! Bienvenido ' + name);
+            } else {
+                alert('Por favor completa todos los campos');
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            showScreen('login-screen');
+            document.getElementById('login-email').value = '';
+            document.getElementById('login-password').value = '';
+        }
+
+        function loadDoctors() {
+            const specialty = document.getElementById('specialty-select').value;
+            const container = document.getElementById('doctors-container');
+            
+            if (!specialty) {
+                container.innerHTML = '';
+                document.getElementById('next-to-booking').style.display = 'none';
+                return;
+            }
+            
+            const doctorsList = doctors[specialty] || [];
+            container.innerHTML = '<h3>Médicos Disponibles:</h3>';
+            
+            doctorsList.forEach((doctor, index) => {
+                container.innerHTML += `
+                    <div class="doctor-card" onclick="selectDoctor('${doctor.name}', '${doctor.specialty}')">
+                        <div class="doctor-name">${doctor.name}</div>
+                        <div class="doctor-specialty">${doctor.specialty} • ${doctor.experience} de experiencia</div>
+                        <div class="doctor-rating">${doctor.rating}</div>
+                    </div>
+                `;
+            });
+        }
+
+        function selectDoctor(name, specialty) {
+            selectedDoctor = {name, specialty};
+            document.querySelectorAll('#doctors-container .doctor-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.target.closest('.doctor-card').classList.add('selected');
+            document.getElementById('next-to-booking').style.display = 'inline-block';
+        }
+
+        function generateCalendar() {
+            if (!selectedDoctor) return;
+            
+            document.getElementById('selected-doctor').value = selectedDoctor.name + ' - ' + selectedDoctor.specialty;
+            
+            const grid = document.getElementById('calendar-grid');
+            const today = new Date();
+            const startDate = new Date(today);
+            startDate.setDate(startDate.getDate() + 1);
+            
+            grid.innerHTML = '';
+            for (let i = 0; i < 14; i++) {
+                const date = new Date(startDate);
+                date.setDate(date.getDate() + i);
+                
+                const dayDiv = document.createElement('div');
+                dayDiv.className = 'calendar-day';
+                dayDiv.innerHTML = `
+                    <div style="font-weight: bold;">${date.toLocaleDateString('es-ES', {weekday: 'short'})}</div>
+                    <div>${date.getDate()}</div>
+                    <div style="font-size: 12px;">${date.toLocaleDateString('es-ES', {month: 'short'})}</div>
+                `;
+                dayDiv.onclick = () => selectDate(date, dayDiv);
+                grid.appendChild(dayDiv);
+            }
+            
+            generateTimeSlots();
+        }
+
+        function selectDate(date, element) {
+            selectedDate = date;
+            document.querySelectorAll('.calendar-day').forEach(day => day.classList.remove('selected'));
+            element.classList.add('selected');
+            checkBookingReady();
+        }
+
+        function generateTimeSlots() {
+            const slots = document.getElementById('time-slots');
+            const times = ['9:00 AM', '10:00 AM', '11:00 AM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM', '6:00 PM'];
+            
+            slots.innerHTML = '';
+            times.forEach(time => {
+                const slotDiv = document.createElement('div');
+                slotDiv.className = 'time-slot';
+                slotDiv.textContent = time;
+                slotDiv.onclick = () => selectTime(time, slotDiv);
+                slots.appendChild(slotDiv);
+            });
+        }
+
+        function selectTime(time, element) {
+            selectedTime = time;
+            document.querySelectorAll('.time-slot').forEach(slot => slot.classList.remove('selected'));
+            element.classList.add('selected');
+            checkBookingReady();
+        }
+
+        function checkBookingReady() {
+            const confirmBtn = document.getElementById('confirm-btn');
+            if (selectedDate && selectedTime) {
+                confirmBtn.style.display = 'inline-block';
+            }
+        }
+
+        function confirmAppointment() {
+            const reason = document.getElementById('consultation-reason').value;
+            
+            if (!reason.trim()) {
+                alert('Por favor ingresa el motivo de la consulta');
+                return;
+            }
+            
+            const appointment = {
+                doctor: selectedDoctor,
+                date: selectedDate,
+                time: selectedTime,
+                reason: reason,
+                id: Date.now()
+            };
+            
+            appointments.push(appointment);
+            
+            document.getElementById('confirmed-appointment').innerHTML = `
+                <div class="doctor-name">${selectedDoctor.name} - ${selectedDoctor.specialty}</div>
+                <div class="doctor-specialty">📅 ${selectedDate.toLocaleDateString('es-ES', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'})} - ${selectedTime}</div>
+                <div style="margin-top: 10px;">
+                    <strong>Motivo:</strong> ${reason}<br>
+                    <strong>Estado:</strong> <span style="color: #28a745;">Confirmada</span>
+                </div>
+            `;
+            
+            showScreen('confirmation-screen');
+            updateHistoryScreen();
+        }
+
+        function updateHistoryScreen() {
+            const upcomingContainer = document.getElementById('upcoming-appointments');
+            upcomingContainer.innerHTML = '';
+            
+            appointments.forEach(appointment => {
+                upcomingContainer.innerHTML += `
+                    <div class="appointment-card">
+                        <div class="doctor-name">${appointment.doctor.name} - ${appointment.doctor.specialty}</div>
+                        <div class="doctor-specialty">📅 ${appointment.date.toLocaleDateString('es-ES', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'})} - ${appointment.time}</div>
+                        <div style="margin-top: 10px;">
+                            <strong>Motivo:</strong> ${appointment.reason}<br>
+                            <strong>Estado:</strong> <span style="color: #007bff;">Programada</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            const messagesContainer = document.getElementById('chat-messages');
+            messagesContainer.innerHTML += `<div class="message user">${message}</div>`;
+            
+            input.value = '';
+            
+            setTimeout(() => {
+                const response = generateChatResponse(message);
+                messagesContainer.innerHTML += `<div class="message bot">${response}</div>`;
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }, 1000);
+            
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function askPredefined(question) {
+            document.getElementById('chat-input').value = question;
+            sendMessage();
+        }
+
+        function generateChatResponse(message) {
+            const lowerMessage = message.toLowerCase();
+            
+            if (lowerMessage.includes('gripe') || lowerMessage.includes('síntoma')) {
+                return "Los síntomas comunes de la gripe incluyen: fiebre, dolores musculares, fatiga, tos seca, dolor de garganta y congestión nasal. Si los síntomas persisten más de 3 días, te recomiendo agendar una cita médica. 🤒";
+            } else if (lowerMessage.includes('cita') || lowerMessage.includes('agendar')) {
+                return "Para agendar una cita puedes: 1) Ir a 'Agendar Nueva Cita' desde el menú principal, 2) Seleccionar la especialidad médica, 3) Elegir tu médico preferido, 4) Seleccionar fecha y hora disponible. ¡Es muy fácil! 📅";
+            } else if (lowerMessage.includes('especialidad')) {
+                return "Tenemos las siguientes especialidades disponibles: Cardiología, Dermatología, Pediatría, Ginecología y Medicina General. Cada especialidad cuenta con médicos altamente calificados. 👩‍⚕️👨‍⚕️";
+            } else if (lowerMessage.includes('dolor') || lowerMessage.includes('duele')) {
+                return "Si tienes dolor persistente, es importante que consultes con un médico. Mientras tanto, puedes aplicar compresas frías/calientes según el tipo de dolor. Te sugiero agendar una cita para evaluación médica. 💊";
+            } else {
+                return "Gracias por tu consulta. Para obtener una evaluación médica completa, te recomiendo agendar una cita con uno de nuestros especialistas. ¿Te gustaría que te ayude con algo más específico? 😊";
+            }
+        }
+
+        // Inicializar la aplicación
+        document.addEventListener('DOMContentLoaded', function() {
+            showScreen('login-screen');
+        });
+    </script>
+</body>
+</html>
